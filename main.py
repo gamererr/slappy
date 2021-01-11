@@ -16,15 +16,23 @@ async def on_ready():
 @client.event
 async def on_message(message):
     if message.content.startswith("!slap"):
+        
+        slapper = message.author
+        
+        slapped = message.mentions
+        
         if message.mention_everyone:
-            await message.channel.send(f"{message.author.mention} slapped everyone! what a powermove!")
+            await message.channel.send(f"{slapper.name} slapped everyone! what a powermove!")
         elif message.mentions == []:
-            await message.channel.send(f"{message.author.mention} slapped the air")
-        elif message.mentions[0] == message.author:
-            await message.channel.send(f"{message.author.mention} slapped themself")
-        elif message.mentions[0].id == 756387237796642856:
+            if (message.content[5:] != ""):
+                await message.channel.send(f"{slapper.name} slapped {message.content[6:]}")
+            else:
+                await message.channel.send(f"{slapper.name} slapped the air")
+        elif slapped[0] == slapper:
+            await message.channel.send(f"{slapper.name} slapped themself")
+        elif slapped[0] == client.user:
             await message.channel.send("You cant slap me, I'm unslapable!")
         else:
-            await message.channel.send(f"{message.author.mention} slapped {message.mentions[0].mention}")
+            await message.channel.send(f"{slapper.name} slapped {slapped[0].name}")
     
 client.run(token)
