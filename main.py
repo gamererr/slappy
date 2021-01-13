@@ -40,14 +40,27 @@ async def saveslapstats(saved, slappednum, slapnum):
     statslappedfile = open("statslapped.json", "wt")
     statslappedfile.write(json.dumps(statslapped))
     statslappedfile.close()
-
+    
 @client.event
 async def on_ready():
-    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="the beautiful sound of slaps"))
+    
+    totalslaps = 0
+    
+    statslapfile = open("statslap.json", "rt")
+    statslap = json.loads(statslapfile.read())
+    statslapfile.close()
+    
+    for id in statslap:
+        totalslaps += statslap[id]
+    print(f"we have {totalslaps} total slaps")
+    
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps"))
     print('hello world')
 
 @client.event
 async def on_message(message):
+    
+    totalslaps = 0
     
     statslappedfile = open("statslapped.json", "rt")
     statslapped = json.loads(statslappedfile.read())
@@ -76,7 +89,6 @@ async def on_message(message):
         
             if message.mention_everyone:
                 await message.channel.send(f"{slapper.name} slapped everyone! what a powermove!")
-
                 await saveslapstats(saved=slapper, slappednum=0, slapnum=len(message.guild.members))
 
             elif message.mentions == []:
@@ -86,6 +98,7 @@ async def on_message(message):
 
                 else:
                     await message.channel.send(f"{slapper.name} slapped the air")
+                    await saveslapstats(saved=slapper, slappednum=0, slapnum=1)
 
             elif slapped[0] == slapper:
                 await message.channel.send(f"{slapper.name} slapped themself")
@@ -98,5 +111,10 @@ async def on_message(message):
                 await message.channel.send(f"{slapper.name} slapped {slapped[0].name}")
                 await saveslapstats(saved=slapper, slappednum=0, slapnum=1)
                 await saveslapstats(saved=slapped[0], slappednum=1, slapnum=0)
+            
+            for id in statslap:
+                totalslaps += statslap[id]
+                
+            await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps"))
 
 client.run(token)
