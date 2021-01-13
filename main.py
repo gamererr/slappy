@@ -57,7 +57,7 @@ async def on_ready():
         totalmembers += len(server.members)
     print(f"we have {totalslaps} total slaps\nwe are in {len(client.guilds)} servers\nthere are {totalmembers} people slapping")
     
-    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps, {len(client.guilds)} servers, {totalmembers} slapping"))
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps, {len(client.guilds)} slapping servers, and {totalmembers} members slapping"))
 
 @client.event
 async def on_message(message):
@@ -122,6 +122,6 @@ async def on_message(message):
                 await saveslapstats(saved=slapper, slappednum=0, slapnum=1)
                 await saveslapstats(saved=slapped[0], slappednum=1, slapnum=0)
                 
-            await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps, {len(client.guilds)} servers, {totalmembers} slapping"))
+            await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps, {len(client.guilds)} slapping servers, and {totalmembers} members slapping"))
 
 client.run(token)
