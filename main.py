@@ -9,17 +9,17 @@ with open("tokenfile", "r") as tokenfile:
 
 client = discord.Client()
 
-statslappedfile = open("statslapped.json", "rt")
-statslapped = json.loads(statslappedfile.read())
-statslappedfile.close()
-
-statslapfile = open("statslap.json", "rt")
-statslap = json.loads(statslapfile.read())
-statslapfile.close()
-
 async def saveslapstats(saved, slappednum, slapnum):
     
-    id = int(saved.id)
+    statslappedfile = open("statslapped.json", "rt")
+    statslapped = json.loads(statslappedfile.read())
+    statslappedfile.close()
+
+    statslapfile = open("statslap.json", "rt")
+    statslap = json.loads(statslapfile.read())
+    statslapfile.close()
+    
+    id = str(saved.id)
 
 
     try:
@@ -48,35 +48,55 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    if message.content.startswith("!slap"):
-        
-        slapper = message.author
-        
-        slapped = message.mentions
-        
-        if message.mention_everyone:
-            await message.channel.send(f"{slapper.name} slapped everyone! what a powermove!")
+    
+    statslappedfile = open("statslapped.json", "rt")
+    statslapped = json.loads(statslappedfile.read())
+    statslappedfile.close()
 
-            await saveslapstats(saved=slapper, slappednum=0, slapnum=len(message.guild.members))
+    statslapfile = open("statslap.json", "rt")
+    statslap = json.loads(statslapfile.read())
+    statslapfile.close()
+    
+    if message.content.startswith("!"):
+        if (message.content[1:6] == "stats"):
+            if message.mentions != []:
+                StatsOn = message.mentions[0]
+            else:
+                StatsOn = message.author
+            
+            try:
+                await message.channel.send(f"{StatsOn.name}'s stats are\nSlaps Dealt: `{statslap[str(StatsOn.id)]}`\nSlaps Recieved: `{statslapped[str(StatsOn.id)]}`")
+            except KeyError:
+                await message.channel.send(f"{StatsOn.name} has no stats. What a Nerd:tm:!")
+            
+        elif (message.content[1:5] == "slap"):
+            slapper = message.author
+        
+            slapped = message.mentions
+        
+            if message.mention_everyone:
+                await message.channel.send(f"{slapper.name} slapped everyone! what a powermove!")
 
-        elif message.mentions == []:
-            if (message.content[5:] != ""):
-                await message.channel.send(f"{slapper.name} slapped {message.clean_content[6:]}")
-                await saveslapstats(saved=slapper, slappednum=0, slapnum=1)
+                await saveslapstats(saved=slapper, slappednum=0, slapnum=len(message.guild.members))
+
+            elif message.mentions == []:
+                if (message.content[5:] != ""):
+                    await message.channel.send(f"{slapper.name} slapped {message.clean_content[6:]}")
+                    await saveslapstats(saved=slapper, slappednum=0, slapnum=1)
+
+                else:
+                    await message.channel.send(f"{slapper.name} slapped the air")
+
+            elif slapped[0] == slapper:
+                await message.channel.send(f"{slapper.name} slapped themself")
+                await saveslapstats(saved=slapper, slappednum=1, slapnum=1)
+
+            elif slapped[0] == client.user:
+                await message.channel.send("You cant slap me, I'm unslapable!")
 
             else:
-                await message.channel.send(f"{slapper.name} slapped the air")
-
-        elif slapped[0] == slapper:
-            await message.channel.send(f"{slapper.name} slapped themself")
-            await saveslapstats(saved=slapper, slappednum=1, slapnum=1)
-
-        elif slapped[0] == client.user:
-            await message.channel.send("You cant slap me, I'm unslapable!")
-
-        else:
-            await message.channel.send(f"{slapper.name} slapped {slapped[0].name}")
-            await saveslapstats(saved=slapper, slappednum=0, slapnum=1)
-            await saveslapstats(saved=slapped, slappednum=1, slapnum=0)
+                await message.channel.send(f"{slapper.name} slapped {slapped[0].name}")
+                await saveslapstats(saved=slapper, slappednum=0, slapnum=1)
+                await saveslapstats(saved=slapped[0], slappednum=1, slapnum=0)
 
 client.run(token)
