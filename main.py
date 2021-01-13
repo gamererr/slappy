@@ -94,11 +94,9 @@ async def on_message(message):
             elif message.mentions == []:
                 if (message.content[5:] != ""):
                     await message.channel.send(f"{slapper.name} slapped {message.clean_content[6:]}")
-                    await saveslapstats(saved=slapper, slappednum=0, slapnum=1)
 
                 else:
                     await message.channel.send(f"{slapper.name} slapped the air")
-                    await saveslapstats(saved=slapper, slappednum=0, slapnum=1)
 
             elif slapped[0] == slapper:
                 await message.channel.send(f"{slapper.name} slapped themself")
