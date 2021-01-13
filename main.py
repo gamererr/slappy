@@ -7,7 +7,7 @@ import json
 with open("tokenfile", "r") as tokenfile:
     token=tokenfile.read()
 
-client = discord.Client()
+client = discord.Client(intents=discord.Intents().all())
 
 async def saveslapstats(saved, slappednum, slapnum):
     
@@ -45,6 +45,7 @@ async def saveslapstats(saved, slappednum, slapnum):
 async def on_ready():
     
     totalslaps = 0
+    totalmembers = 0
     
     statslapfile = open("statslap.json", "rt")
     statslap = json.loads(statslapfile.read())
@@ -52,15 +53,14 @@ async def on_ready():
     
     for id in statslap:
         totalslaps += statslap[id]
-    print(f"we have {totalslaps} total slaps")
+    for server in client.guilds:
+        totalmembers += len(server.members)
+    print(f"we have {totalslaps} total slaps\nwe are in {len(client.guilds)} servers\nthere are {totalmembers} people slapping")
     
-    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps"))
-    print('hello world')
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps, {len(client.guilds)} servers, {totalmembers} slapping"))
 
 @client.event
 async def on_message(message):
-    
-    totalslaps = 0
     
     statslappedfile = open("statslapped.json", "rt")
     statslapped = json.loads(statslappedfile.read())
@@ -70,12 +70,24 @@ async def on_message(message):
     statslap = json.loads(statslapfile.read())
     statslapfile.close()
     
+    totalslaps = 0
+    totalmembers = 0
+    
+    for id in statslap:
+        totalslaps += statslap[id]
+    for server in client.guilds:
+        totalmembers += len(server.members)
+    
     if message.content.startswith("!"):
         if (message.content[1:6] == "stats"):
             if message.mentions != []:
                 StatsOn = message.mentions[0]
             else:
                 StatsOn = message.author
+            
+            if StatsOn == client.user:
+                await message.channel.send(f"we have {totalslaps} total slaps\nwe are in {len(client.guilds)} servers\nthere are {totalmembers} people slapping")
+                return
             
             try:
                 await message.channel.send(f"{StatsOn.name}'s stats are\nSlaps Dealt: `{statslap[str(StatsOn.id)]}`\nSlaps Recieved: `{statslapped[str(StatsOn.id)]}`")
@@ -109,10 +121,7 @@ async def on_message(message):
                 await message.channel.send(f"{slapper.name} slapped {slapped[0].name}")
                 await saveslapstats(saved=slapper, slappednum=0, slapnum=1)
                 await saveslapstats(saved=slapped[0], slappednum=1, slapnum=0)
-            
-            for id in statslap:
-                totalslaps += statslap[id]
                 
-            await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps"))
+            await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps, {len(client.guilds)} servers, {totalmembers} slapping"))
 
 client.run(token)
