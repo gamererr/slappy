@@ -145,6 +145,9 @@ async def on_message(message):
                 return
             await bug.send(f'report from **{message.author.name}** in server **{message.guild.name}**:\n{" ".join(args[1:])}')
 
+        elif (args[0] == "invite"):
+            message.channel.send("https://discord.gg/HpsDgr9")
+
         elif (args[0] == "help"):
             await message.channel.send("Heres the list of commands", embed=helpmessage)
 
