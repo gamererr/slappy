@@ -59,8 +59,15 @@ async def on_ready():
     
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps, {len(client.guilds)} slapping servers, and {totalmembers} members slapping"))
 
+prefix = "s!"
+
 @client.event
 async def on_message(message):
+
+    helpmessage = discord.Embed(title="Commands", colour=discord.Colour(0xd084), description=f"**slap** - Slap Someone. args:\n    {prefix}slap <mention (optional)>\n\n**stats** - Get Stats. args:\n    {prefix}stats <mention (optional)>")
+
+    helpmessage.set_author(name="Help")
+    helpmessage.set_footer(text=f"{message.author.name}")
     
     statslappedfile = open("statslapped.json", "rt")
     statslapped = json.loads(statslappedfile.read())
@@ -78,8 +85,11 @@ async def on_message(message):
     for server in client.guilds:
         totalmembers += len(server.members)
     
-    if message.content.startswith("!"):
-        if (message.content[1:6] == "stats"):
+    argsraw = message.content.lower().replace(prefix, "")
+    args = argsraw.split(" ")
+
+    if message.content.startswith(prefix):
+        if (args[0] == "stats"):
             if message.mentions != []:
                 StatsOn = message.mentions[0]
             else:
@@ -93,8 +103,8 @@ async def on_message(message):
                 await message.channel.send(f"{StatsOn.name}'s stats are\nSlaps Dealt: `{statslap[str(StatsOn.id)]}`\nSlaps Recieved: `{statslapped[str(StatsOn.id)]}`")
             except KeyError:
                 await message.channel.send(f"{StatsOn.name} has no stats. What a Nerd:tm:!")
-            
-        elif (message.content[1:5] == "slap"):
+
+        elif (args[0] == "slap"):
             slapper = message.author
         
             slapped = message.mentions
@@ -104,9 +114,8 @@ async def on_message(message):
                 await saveslapstats(saved=slapper, slappednum=0, slapnum=len(message.guild.members))
 
             elif message.mentions == []:
-                if (message.content[5:] != ""):
+                if (args[1] != ""):
                     await message.channel.send(f"{slapper.name} slapped {message.clean_content[6:]}")
-
                 else:
                     await message.channel.send(f"{slapper.name} slapped the air")
 
@@ -123,5 +132,8 @@ async def on_message(message):
                 await saveslapstats(saved=slapped[0], slappednum=1, slapnum=0)
                 
             await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps, {len(client.guilds)} slapping servers, and {totalmembers} members slapping"))
+
+        elif (args[0] == "help"):
+            await message.channel.send("Heres the list of commands", embed=helpmessage)
 
 client.run(token)
