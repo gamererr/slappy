@@ -64,18 +64,20 @@ prefix = "s!"
 @client.event
 async def on_message(message):
 
-    helpmessage = discord.Embed(title="Commands", colour=discord.Colour(0xd084), description=f"**slap** - Slap Someone. args:\n    {prefix}slap <mention (optional)>\n\n**stats** - Get Stats. args:\n    {prefix}stats <mention (optional)>")
+    helpmessage = discord.Embed(title="Commands", colour=discord.Colour(0xd084), description=f"**slap** - Slap Someone. args:\n    {prefix}slap <mention (optional)>\n\n**stats** - Get Stats. args:\n    {prefix}stats <mention (optional)>\n\n**bug** - Report a bug, __not for suggestions__. args:\n    {prefix}bug <report (required)>")
 
     helpmessage.set_author(name="Help")
     helpmessage.set_footer(text=f"{message.author.name}", icon_url=f"https://cdn.discordapp.com/avatars/{message.author.id}/{message.author.avatar}.png")
     
-    statslappedfile = open("statslapped.json", "rt")
-    statslapped = json.loads(statslappedfile.read())
-    statslappedfile.close()
+    internetfunny = discord.utils.get(client.guilds, id=766848554899079218)
+    bug = discord.utils.get(internetfunny.channels, id=782228427880267776)
 
-    statslapfile = open("statslap.json", "rt")
-    statslap = json.loads(statslapfile.read())
-    statslapfile.close()
+
+    with open("statslapped.json", "rt") as statslappedfile:
+        statslapped = json.loads(statslappedfile.read())
+
+    with open("statslap.json", "rt") as statslapfile:
+        statslap = json.loads(statslapfile.read())
     
     totalslaps = 0
     totalmembers = 0
@@ -132,6 +134,16 @@ async def on_message(message):
                 await saveslapstats(saved=slapped[0], slappednum=1, slapnum=0)
                 
             await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps, {len(client.guilds)} slapping servers, and {totalmembers} members slapping"))
+
+        elif (args[0] == "bug"):
+            if (message.guild.id == 766848554899079218):
+                return
+            await message.add_reaction("🎷")
+            await message.add_reaction("🐛")
+            if (args[1:] == []):
+                await message.channel.send(f"bro, you need to say what you are reporting. use {prefix}help to get help")
+                return
+            await bug.send(f'report from **{message.author.name}** in server **{message.guild.name}**:\n{" ".join(args[1:])}')
 
         elif (args[0] == "help"):
             await message.channel.send("Heres the list of commands", embed=helpmessage)
