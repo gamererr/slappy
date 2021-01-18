@@ -64,7 +64,7 @@ prefix = "s!"
 @client.event
 async def on_message(message):
 
-    helpmessage = discord.Embed(title="Commands", colour=discord.Colour(0xd084), description=f"**slap** - Slap Someone. args:\n    {prefix}slap <mention (optional)>\n\n**stats** - Get Stats. args:\n    {prefix}stats <mention (optional)>\n\n**bug** - Report a bug, __not for suggestions__. args:\n    {prefix}bug <report (required)>")
+    helpmessage = discord.Embed(title="Commands", colour=discord.Colour(0xd084), description=f"**slap** - Slap Someone. args:\n    {prefix}slap <mention (optional)>\n\n**stats** - Get Stats. args:\n    {prefix}stats <mention (optional)>\n\n**bug** - Report a bug, __not for suggestions__. args:\n    {prefix}bug <report (required)>\n\n**suggest** - Make a Suggestion:tm:, __not for bug reports__. args:\n    {prefix}suggest <suggestion (required)>")
 
     helpmessage.set_author(name="Help")
     helpmessage.set_footer(text=f"{message.author.name}", icon_url=f"https://cdn.discordapp.com/avatars/{message.author.id}/{message.author.avatar}.png")
@@ -144,6 +144,16 @@ async def on_message(message):
                 await message.channel.send(f"bro, you need to say what you are reporting. use {prefix}help to get help")
                 return
             await bug.send(f'report from **{message.author.name}** in server **{message.guild.name}**:\n{" ".join(args[1:])}')
+                           
+        elif (args[0] == "suggest"):
+            if (message.guild.id == 766848554899079218):
+                return
+            await message.add_reaction("🎷")
+            await message.add_reaction("🐛")
+            if (args[1:] == []):
+                await message.channel.send(f"bro, you need to say what you are suggesting. use {prefix}help to get help")
+                return
+            await bug.send(f'suggestion from **{message.author.name}** in server **{message.guild.name}**:\n{" ".join(args[1:])}')
 
         elif (args[0] == "invite"):
             message.channel.send("https://discord.gg/HpsDgr9")
