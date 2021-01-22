@@ -116,9 +116,10 @@ async def on_message(message):
                 await saveslapstats(saved=slapper, slappednum=0, slapnum=len(message.guild.members))
 
             elif message.mentions == []:
-                if (args[1] != ""):
-                    await message.channel.send(f"{slapper.name} slapped {message.clean_content[6:]}")
-                else:
+                try:
+                    if (args[1] != ""):
+                        await message.channel.send(f"{slapper.name} slapped {message.clean_content[6:]}")
+                except IndexError:
                     await message.channel.send(f"{slapper.name} slapped the air")
 
             elif slapped[0] == slapper:
