@@ -59,12 +59,19 @@ async def on_ready():
     
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps, {len(client.guilds)} slapping servers, and {totalmembers} members slapping"))
 
-prefix = "s!"
-
 shadowban = [431978032094380043]
 
 @client.event
 async def on_message(message):
+
+    prefixesraw = open("prefixes.json", "rt")
+    prefixes = json.loads(prefixesraw.read())
+    prefixesraw.close()
+
+    try:
+        prefix = prefixes[str(message.guild.id)]
+    except KeyError:
+        prefix = "s!"
 
     helpmessage = discord.Embed(title="Commands", colour=discord.Colour(0xd084), description=f"**slap** - Slap Someone. args:\n    {prefix}slap <mention (optional)>\n\n**stats** - Get Stats. args:\n    {prefix}stats <mention (optional)>\n\n**bug** - Report a bug, __not for suggestions__. args:\n    {prefix}bug <report (required)>\n\n**suggest** - Make a Suggestion:tm:, __not for bug reports__. args:\n    {prefix}suggest <suggestion (required)>\n\n**invite** - Get an invite to The Server: args:\n    {prefix}invite ")
 
@@ -89,7 +96,7 @@ async def on_message(message):
     for server in client.guilds:
         totalmembers += len(server.members)
     
-    argsraw = message.content.lower().replace(prefix, "")
+    argsraw = message.clean_content.lower().replace(prefix, "")
     args = argsraw.split(" ")
 
     if message.content.startswith(prefix):
@@ -120,7 +127,7 @@ async def on_message(message):
             elif message.mentions == []:
                 try:
                     if (args[1] != ""):
-                        await message.channel.send(f"{slapper.name} slapped {message.clean_content[6:]}")
+                        await message.channel.send(f"{slapper.name} slapped {' '.join(args[1:])}")
                 except IndexError:
                     await message.channel.send(f"{slapper.name} slapped the air")
 
@@ -142,7 +149,7 @@ async def on_message(message):
             if (message.guild.id == 766848554899079218):
                 return
             if (message.author.id in shadowban):
-                await message.channel.send("im sorry, but because you have spammed the suggestion and bug report commands with annoying nonsense, you have been ban from making bug reports and suggestions through the bot. you may continue using the bot's other features, just not this one. you may join the support server (get invite with {prefix}invite) to make suggestions less-anonymously.")
+                await message.channel.send(f"im sorry, but because you have spammed the suggestion and bug report commands with annoying nonsense, you have been ban from making bug reports and suggestions through the bot. you may continue using the bot's other features, just not this one. you may join the support server (get invite with {prefix}invite) to make suggestions less-anonymously.")
                 return
             await message.add_reaction("🎷")
             await message.add_reaction("🐛")
@@ -156,7 +163,7 @@ async def on_message(message):
             if (message.guild.id == 766848554899079218):
                 return
             if (message.author.id in shadowban):
-                await message.channel.send("im sorry, but because you have spammed the suggestion and bug report commands with annoying nonsense, you have been ban from making bug reports and suggestions through the bot. you may continue using the bot's other features, just not this one. you may join the support server (get invite with {prefix}invite) to make suggestions less-anonymously.")
+                await message.channel.send(f"im sorry, but because you have spammed the suggestion and bug report commands with annoying nonsense, you have been ban from making bug reports and suggestions through the bot.\n\nyou may continue using the bot's other features, just not this one. you may join the support server to make suggestions less-anonymously.")
                 return
             await message.add_reaction("🎷")
             await message.add_reaction("🐛")
@@ -169,12 +176,30 @@ async def on_message(message):
         elif (args[0] == "invite"):
             await message.channel.send("support server: https://discord.gg/HpsDgr9\nbot invite: https://discord.com/api/oauth2/authorize?client_id=798177958686097469&permissions=2048&scope=bot")
 
+        elif (args[0] == "prefix"):
+            try:
+               prefixes[str(message.guild.id)] = args[1]
+
+                prefixesraw = open("prefixes.json", "wt")
+                prefixesraw.write(json.dumps(prefixes))
+                prefixesraw.close()
+
+                await message.channel.send(f"prefix has been changed to {prefixes[str(message.guild.id)]}")
+            except IndexError:
+                await message.channel.send(f"server prefix is {prefix}")
+
         elif (args[0] == "help"):
             await message.channel.send("Heres the list of commands", embed=helpmessage)
                            
     elif (client.user in message.mentions):
         await message.channel.send("Heres the list of commands", embed=helpmessage)
 
+@client.event
+async def on_guild_join(guild):
 
+    internetfunny = discord.utils.get(client.guilds, id=766848554899079218)
+    bots = discord.utils.get(internetfunny.channels, id=782228427880267776)
+
+    await bots.send(f"i just joined a guild called **{guild.name}** and it has *{len(guild.members)}* members")
 
 client.run(token)
