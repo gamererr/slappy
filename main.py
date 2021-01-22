@@ -61,6 +61,8 @@ async def on_ready():
 
 prefix = "s!"
 
+shadowban = [431978032094380043]
+
 @client.event
 async def on_message(message):
 
@@ -139,15 +141,22 @@ async def on_message(message):
         elif (args[0] == "bug"):
             if (message.guild.id == 766848554899079218):
                 return
+            if (message.author.id in shadowban):
+                await message.channel.send("im sorry, but because you have spammed the suggestion and bug report commands with annoying nonsense, you have been ban from making bug reports and suggestions through the bot. you may continue using the bot's other features, just not this one. you may join the support server (get invite with {prefix}invite) to make suggestions less-anonymously.")
+                return
             await message.add_reaction("🎷")
             await message.add_reaction("🐛")
             if (args[1:] == []):
                 await message.channel.send(f"bro, you need to say what you are reporting. use {prefix}help to get help")
                 return
             await bug.send(f'report from **{message.author.name}** in server **{message.guild.name}**:\n{" ".join(args[1:])}')
+            await message.channel.send("just a friendly reminder not to shitpost into the suggestion and bug report commands as it is very annoying")
                            
         elif (args[0] == "suggest"):
             if (message.guild.id == 766848554899079218):
+                return
+            if (message.author.id in shadowban):
+                await message.channel.send("im sorry, but because you have spammed the suggestion and bug report commands with annoying nonsense, you have been ban from making bug reports and suggestions through the bot. you may continue using the bot's other features, just not this one. you may join the support server (get invite with {prefix}invite) to make suggestions less-anonymously.")
                 return
             await message.add_reaction("🎷")
             await message.add_reaction("🐛")
@@ -155,14 +164,17 @@ async def on_message(message):
                 await message.channel.send(f"bro, you need to say what you are suggesting. use {prefix}help to get help")
                 return
             await bug.send(f'suggestion from **{message.author.name}** in server **{message.guild.name}**:\n{" ".join(args[1:])}')
+            await message.channel.send("just a friendly reminder not to shitpost into the suggestion and bug report commands as it is very annoying")
 
         elif (args[0] == "invite"):
-            await message.channel.send("https://discord.gg/HpsDgr9")
+            await message.channel.send("support server: https://discord.gg/HpsDgr9\nbot invite: https://discord.com/api/oauth2/authorize?client_id=798177958686097469&permissions=2048&scope=bot")
 
         elif (args[0] == "help"):
             await message.channel.send("Heres the list of commands", embed=helpmessage)
                            
     elif (client.user in message.mentions):
         await message.channel.send("Heres the list of commands", embed=helpmessage)
+
+
 
 client.run(token)
