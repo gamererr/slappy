@@ -73,7 +73,7 @@ async def on_message(message):
     except KeyError:
         prefix = "s!"
 
-    helpmessage = discord.Embed(title="Commands", colour=discord.Colour(0xd084), description=f"**slap** - Slap Someone. args:\n    {prefix}slap <mention (optional)>\n\n**stats** - Get Stats. args:\n    {prefix}stats <mention (optional)>\n\n**bug** - Report a bug, __not for suggestions__. args:\n    {prefix}bug <report (required)>\n\n**suggest** - Make a Suggestion:tm:, __not for bug reports__. args:\n    {prefix}suggest <suggestion (required)>\n\n**invite** - Get an invite to The Server: args:\n    {prefix}invite ")
+    helpmessage = discord.Embed(title="Commands", colour=discord.Colour(0xd084), description=f"**slap** - Slap Someone. use:\n    {prefix}slap <mention (optional)>\n\n**stats** - Get Stats. use:\n    {prefix}stats <mention (optional)>\n\n**bug** - Report a bug, __not for suggestions__. use:\n    {prefix}bug <report (required)>\n\n**suggest** - Make a Suggestion:tm:, __not for bug reports__. use:\n    {prefix}suggest <suggestion (required)>\n\n**invite** - Get an invite to The Server: use:\n    {prefix}invite\n\n**prefix** - Change the server prefix. use:\n    {prefix}prefix <prefix to chage to - optional>e\n\n**repo** - get a link to the github repo. use:\n    {prefix}prefix <prefix to chage to - optional>")
 
     helpmessage.set_author(name="Help")
     helpmessage.set_footer(text=f"{message.author.name}", icon_url=f"https://cdn.discordapp.com/avatars/{message.author.id}/{message.author.avatar}.png")
@@ -176,6 +176,9 @@ async def on_message(message):
         elif (args[0] == "invite"):
             await message.channel.send("support server: https://discord.gg/HpsDgr9\nbot invite: https://discord.com/api/oauth2/authorize?client_id=798177958686097469&permissions=2048&scope=bot")
 
+        elif (args[0] == "repo"):
+            await message.channel.send("here is the github repo: https://github.com/gamererr/slappy")
+
         elif (args[0] == "prefix"):
             try:
                prefixes[str(message.guild.id)] = args[1]
@@ -192,7 +195,7 @@ async def on_message(message):
             await message.channel.send("Heres the list of commands", embed=helpmessage)
                            
     elif (client.user in message.mentions):
-        await message.channel.send("Heres the list of commands", embed=helpmessage)
+        await message.channel.send(f"server prefix is `{prefix}`", embed=helpmessage)
 
 @client.event
 async def on_guild_join(guild):
