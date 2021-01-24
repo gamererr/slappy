@@ -73,7 +73,7 @@ async def on_message(message):
     except KeyError:
         prefix = "s!"
 
-    helpmessage = discord.Embed(title="Commands", colour=discord.Colour(0xd084), description=f"**slap** - Slap Someone. use:\n    {prefix}slap <mention (optional)>\n\n**stats** - Get Stats. use:\n    {prefix}stats <mention (optional)>\n\n**bug** - Report a bug, __not for suggestions__. use:\n    {prefix}bug <report (required)>\n\n**suggest** - Make a Suggestion:tm:, __not for bug reports__. use:\n    {prefix}suggest <suggestion (required)>\n\n**invite** - Get an invite to The Server: use:\n    {prefix}invite\n\n**prefix** - Change the server prefix. use:\n    {prefix}prefix <prefix to chage to - optional>e\n\n**repo** - get a link to the github repo. use:\n    {prefix}prefix <prefix to chage to - optional>")
+    helpmessage = discord.Embed(title="Commands", colour=discord.Colour(0xd084), description=f"**slap** - Slap Someone. use:```{prefix}slap <mention (optional)>```\n**stats** - Get Stats. use:```{prefix}stats <mention (optional)>```\n**bug** - Report a bug, __not for suggestions__. use:```{prefix}bug <report (required)>```\n**suggest** - Make a Suggestion:tm:, __not for bug reports__. use:```{prefix}suggest <suggestion (required)>```\n**invite** - Get an invite to The Server: use:```{prefix}invite```\n**prefix** - Change the server prefix. use:```{prefix}prefix <prefix to chage to - optional>```\n**repo** - get a link to the github repo. use:```{prefix}repo```")
 
     helpmessage.set_author(name="Help")
     helpmessage.set_footer(text=f"{message.author.name}", icon_url=f"https://cdn.discordapp.com/avatars/{message.author.id}/{message.author.avatar}.png")
