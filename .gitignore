@@ -1,3 +1,2 @@
 tokenfile
-statslap.json
-statslapped.json
+*.json

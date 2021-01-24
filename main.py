@@ -214,4 +214,13 @@ async def on_guild_join(guild):
 
     await bots.send(f"i just joined a guild called **{guild.name}** and it has *{len(guild.members)}* members")
 
+@client.event
+async def on_guild_remove(guild):
+
+    internetfunny = discord.utils.get(client.guilds, id=766848554899079218)
+    bots = discord.utils.get(internetfunny.channels, id=782228427880267776)
+
+    await bots.send(f"i just left a guild called **{guild.name}** and it had *{len(guild.members)}* members")
+
+
 client.run(token)
