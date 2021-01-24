@@ -180,11 +180,11 @@ async def on_message(message):
             try:
                prefixes[str(message.guild.id)] = args[1]
 
-                prefixesraw = open("prefixes.json", "wt")
-                prefixesraw.write(json.dumps(prefixes))
-                prefixesraw.close()
+               prefixesraw = open("prefixes.json", "wt")
+               prefixesraw.write(json.dumps(prefixes))
+               prefixesraw.close()
 
-                await message.channel.send(f"prefix has been changed to {prefixes[str(message.guild.id)]}")
+               await message.channel.send(f"prefix has been changed to {prefixes[str(message.guild.id)]}")
             except IndexError:
                 await message.channel.send(f"server prefix is {prefix}")
 
