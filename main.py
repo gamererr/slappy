@@ -10,7 +10,7 @@ with open("tokenfile", "r") as tokenfile:
 
 client = discord.Client(intents=discord.Intents().all())
 
-async def saveslapstats(saved, slappednum, slapnum):
+async def saveslapstats(message, saved, slappednum, slapnum):
     
     statslappedfile = open("statslapped.json", "rt")
     statslapped = json.loads(statslappedfile.read())
@@ -33,6 +33,15 @@ async def saveslapstats(saved, slappednum, slapnum):
 
         statslapped[id] += slappednum
         statslap[id] += slapnum
+
+    totalslaps = 0
+
+    for id in statslap:
+        totalslaps += statslap[id]
+
+    if totalslaps >= 420:
+        await message.channel.send(f"congrats, {message.author.name}, you are the dealer of the 420th slap and will be given a special role if you join the support server because funny number. https://discord.gg/ygPF4XH")
+        print(f"{message.author} got the 420th slap")
 
     statslapfile = open("statslap.json", "wt")
     statslapfile.write(json.dumps(statslap))
@@ -123,7 +132,7 @@ async def on_message(message):
         
             if message.mention_everyone:
                 await message.channel.send(f"{slapper.name} slapped everyone! what a powermove!")
-                await saveslapstats(saved=slapper, slappednum=0, slapnum=len(message.guild.members))
+                await saveslapstats(saved=slapper, slappednum=0, slapnum=len(message.guild.members), message=message)
 
             elif message.mentions == []:
                 try:
@@ -134,7 +143,7 @@ async def on_message(message):
 
             elif slapped[0] == slapper:
                 await message.channel.send(f"{slapper.name} slapped themself")
-                await saveslapstats(saved=slapper, slappednum=1, slapnum=1)
+                await saveslapstats(saved=slapper, slappednum=1, slapnum=1, message=message)
 
             elif slapped[0] == client.user:
                 await message.channel.send("You cant slap me, I'm unslapable!")
@@ -142,7 +151,7 @@ async def on_message(message):
             else:
                 await message.channel.send(f"{slapper.name} slapped {slapped[0].name}")
                 await saveslapstats(saved=slapper, slappednum=0, slapnum=1)
-                await saveslapstats(saved=slapped[0], slappednum=1, slapnum=0)
+                await saveslapstats(saved=slapped[0], slappednum=1, slapnum=0, message=message)
                 
             await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps, {len(client.guilds)} slapping servers, and {totalmembers} members slapping"))
 
@@ -202,6 +211,8 @@ async def on_message(message):
             ping = str(ping).split(".")
 
             await pingmessage.edit(content=f"Pong! `{ping[0]} ms`")
+
+            print(f"ping is {ping[0]} ms")
 
     elif (client.user in message.mentions):
         await message.channel.send(f"server prefix is `{prefix}`", embed=helpmessage)
