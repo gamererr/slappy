@@ -87,7 +87,7 @@ async def on_message(message):
     except KeyError:
         prefix = "s!"
 
-    helpmessage = discord.Embed(title="Commands", colour=discord.Colour(0xd084), description=f"**slap** - Slap Someone. use:```{prefix}slap <mention (optional)>```\n**stats** - Get Stats. use:```{prefix}stats <mention (optional)>```\n**bug** - Report a bug, __not for suggestions__. use:```{prefix}bug <report (required)>```\n**suggest** - Make a Suggestion:tm:, __not for bug reports__. use:```{prefix}suggest <suggestion (required)>```\n**invite** - Get an invite to The Server: use:```{prefix}invite```\n**prefix** - Change the server prefix. use:```{prefix}prefix <prefix to chage to - optional>```\n**repo** - get a link to the github repo. use:```{prefix}repo```\n**ping** - Get the latency. use:```{prefix}ping```")
+    helpmessage = discord.Embed(title="Commands", colour=discord.Colour(0xd084), description=f"**slap** - Slap Someone. use:```{prefix}slap <mention (optional)>```\n**stats** - Get Stats. use:```{prefix}stats <mention (optional)>```\n**bug** - Report a bug, __not for suggestions__. use:```{prefix}bug <report (required)>```\n**suggest** - Make a Suggestion:tm:, __not for bug reports__. use:```{prefix}suggest <suggestion (required)>```\n**invite** - Get an invite to The Server: use:```{prefix}invite```\n**repo** - get a link to the github repo. use:```{prefix}repo```\n**ping** - Get the latency. use:```{prefix}ping```\n**settings** - Change the bot settings. use:```{prefix}settings <prefix/announcement>```")
 
     helpmessage.set_author(name="Help")
     helpmessage.set_footer(text=f"{message.author.name}", icon_url=f"https://cdn.discordapp.com/avatars/{message.author.id}/{message.author.avatar}.png")
@@ -193,18 +193,6 @@ async def on_message(message):
         elif (args[0] == "repo"):
             await message.channel.send("here is the github repo: https://github.com/gamererr/slappy")
 
-        elif (args[0] == "prefix"):
-            try:
-               prefixes[str(message.guild.id)] = args[1]
-
-               prefixesraw = open("prefixes.json", "wt")
-               prefixesraw.write(json.dumps(prefixes))
-               prefixesraw.close()
-
-               await message.channel.send(f"prefix has been changed to {prefixes[str(message.guild.id)]}")
-            except IndexError:
-                await message.channel.send(f"server prefix is `{prefix}`")
-
         elif (args[0] == "help"):
             await message.channel.send("Heres the list of commands", embed=helpmessage)
 
@@ -215,6 +203,21 @@ async def on_message(message):
             ping = str(ping).split(".")
 
             await pingmessage.edit(content=f"Pong! `{ping[0]} ms`")
+
+        elif (args[0] == "settings"):
+            
+            if (args[1] == "prefix"):
+                try:
+                    prefixes[str(message.guild.id)] = args[1]
+
+                    prefixesraw = open("prefixes.json", "wt")
+                    prefixesraw.write(json.dumps(prefixes))
+                    prefixesraw.close()
+
+                    await message.channel.send(f"prefix has been changed to {prefixes[str(message.guild.id)]}")
+                except IndexError:
+                    await message.channel.send(f"server prefix is `{prefix}`")
+
 
     elif (client.user in message.mentions):
         await message.channel.send(f"server prefix is `{prefix}`", embed=helpmessage)
