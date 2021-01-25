@@ -1,2 +1,4 @@
 tokenfile
-*.json
+prefixes.json
+statslapped.json
+statslap.json
