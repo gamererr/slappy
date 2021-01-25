@@ -35,13 +35,17 @@ async def saveslapstats(message, saved, slappednum, slapnum):
         statslap[id] += slapnum
 
     totalslaps = 0
+    done = False
 
     for id in statslap:
         totalslaps += statslap[id]
 
-    if totalslaps >= 420:
+    if totalslaps >= 666:
+        if done:
+            return
         await message.channel.send(f"congrats, {message.author.name}, you are the dealer of the 420th slap and will be given a special role if you join the support server because funny number. https://discord.gg/ygPF4XH")
         print(f"{message.author} got the 420th slap")
+        done = True
 
     statslapfile = open("statslap.json", "wt")
     statslapfile.write(json.dumps(statslap))
@@ -150,7 +154,7 @@ async def on_message(message):
 
             else:
                 await message.channel.send(f"{slapper.name} slapped {slapped[0].name}")
-                await saveslapstats(saved=slapper, slappednum=0, slapnum=1)
+                await saveslapstats(saved=slapper, slappednum=0, slapnum=1, message=message)
                 await saveslapstats(saved=slapped[0], slappednum=1, slapnum=0, message=message)
                 
             await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps, {len(client.guilds)} slapping servers, and {totalmembers} members slapping"))
