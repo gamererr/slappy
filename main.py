@@ -212,8 +212,6 @@ async def on_message(message):
 
             await pingmessage.edit(content=f"Pong! `{ping[0]} ms`")
 
-            print(f"ping is {ping[0]} ms")
-
     elif (client.user in message.mentions):
         await message.channel.send(f"server prefix is `{prefix}`", embed=helpmessage)
 
