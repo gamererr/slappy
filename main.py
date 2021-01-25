@@ -82,6 +82,10 @@ async def on_message(message):
     prefixes = json.loads(prefixesraw.read())
     prefixesraw.close()
 
+    announcementsraw = open("announcements.json", "rt")
+    announcements = json.loads(announcementsraw.read())
+    announcementsraw.close()
+
     try:
         prefix = prefixes[str(message.guild.id)]
     except KeyError:
@@ -204,11 +208,16 @@ async def on_message(message):
 
             await pingmessage.edit(content=f"Pong! `{ping[0]} ms`")
 
-        elif (args[0] == "settings"):
+        elif (args[0] == "settings") or (args[0] == "set"):
             
-            if (args[1] == "prefix"):
+            if (args[1] == "prefix") or (args[1] == "p"):
+
+                if not (message.channel.permissions_for(message.author).manage_guild):
+                    await message.channel.send("you dont have the permision to do that")
+                    return
+
                 try:
-                    prefixes[str(message.guild.id)] = args[1]
+                    prefixes[str(message.guild.id)] = args[2]
 
                     prefixesraw = open("prefixes.json", "wt")
                     prefixesraw.write(json.dumps(prefixes))
@@ -218,6 +227,34 @@ async def on_message(message):
                 except IndexError:
                     await message.channel.send(f"server prefix is `{prefix}`")
 
+            if (args[1] == "announcements") or (args[1] == "a"):
+
+                if not (message.channel.permissions_for(message.author).manage_guild):
+                    await message.channel.send("you dont have the permision to do that")
+                    return
+                
+                id = str(message.guild.id)
+                channelid = message.channel_mentions[0].id
+
+                announcements[id] = channelid
+
+                announcementsraw = open("announcements.json", "wt")
+                announcementsraw.write(json.dumps(announcements))
+                announcementsraw.close()
+
+                await message.channel.send(f"announcement channel set to <#{channelid}>")
+
+        elif (args[0] == "announce"):
+            if (message.author.id != 312292633978339329):
+                return
+            
+            for guild in announcements:
+                server = discord.utils.get(client.guilds, id=int(guild))
+                channel = discord.utils.get(server.channels, id=announcements[guild])
+
+                announce = " ".join(args[1:])
+
+                await channel.send(announce)
 
     elif (client.user in message.mentions):
         await message.channel.send(f"server prefix is `{prefix}`", embed=helpmessage)
@@ -229,6 +266,13 @@ async def on_guild_join(guild):
     bots = discord.utils.get(internetfunny.channels, id=782228427880267776)
 
     await bots.send(f"i just joined a guild called **{guild.name}** and it has *{len(guild.members)}* members")
+    
+    for channel in guild.channels:
+        try:
+            await channel.send("thanks for adding me to your server! you can use `s!settings announcements <channel mention>` to follow the announcements")
+            break
+        except:
+            print("")
 
 @client.event
 async def on_guild_remove(guild):
@@ -237,6 +281,25 @@ async def on_guild_remove(guild):
     bots = discord.utils.get(internetfunny.channels, id=782228427880267776)
 
     await bots.send(f"i just left a guild called **{guild.name}** and it had *{len(guild.members)}* members")
+
+    announcementsraw = open("announcements.json", "rt")
+    announcements = json.loads(announcementsraw.read())
+    announcementsraw.close()
+
+    prefixesraw = open("prefixes.json", "rt")
+    prefixes = json.loads(prefixesraw.read())
+    prefixesraw.close()
+
+    announcements.pop(str(guild.id))  
+    prefixes.pop(str(guild.id))    
+
+    announcementsraw = open("announcements.json", "rt")
+    announcementsraw.write(json.dumps(announcements))
+    announcementsraw.close()
+
+    prefixesraw = open("prefixes.json", "rt")
+    prefixesraw.write(json.dumps(prefixes))
+    prefixesraw.close()
 
 
 client.run(token)
