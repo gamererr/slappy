@@ -8,7 +8,16 @@ import time
 with open("tokenfile", "r") as tokenfile:
     token=tokenfile.read()
 
+async def attachments_to_files(attached,spoiler=False):
+	filelist = []
+	for i in attached:
+		file = await i.to_file()
+		filelist.insert(len(filelist),file)
+	return filelist
+
 client = discord.Client(intents=discord.Intents().all())
+
+done = False
 
 async def saveslapstats(message, saved, slappednum, slapnum):
     
@@ -35,17 +44,12 @@ async def saveslapstats(message, saved, slappednum, slapnum):
         statslap[id] += slapnum
 
     totalslaps = 0
-    done = False
 
     for id in statslap:
         totalslaps += statslap[id]
 
-    if totalslaps >= 666:
-        if done:
-            return
-        await message.channel.send(f"congrats, {message.author.name}, you are the dealer of the 420th slap and will be given a special role if you join the support server because funny number. https://discord.gg/ygPF4XH")
-        print(f"{message.author} got the 420th slap")
-        done = True
+    if totalslaps >= 700:
+        print(f"{message.author} dealt the 700th slap")
 
     statslapfile = open("statslap.json", "wt")
     statslapfile.write(json.dumps(statslap))
@@ -160,8 +164,9 @@ async def on_message(message):
                 await message.channel.send(f"{slapper.name} slapped {slapped[0].name}")
                 await saveslapstats(saved=slapper, slappednum=0, slapnum=1, message=message)
                 await saveslapstats(saved=slapped[0], slappednum=1, slapnum=0, message=message)
-                
-            await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps, {len(client.guilds)} slapping servers, and {totalmembers} members slapping"))
+            
+
+            await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f'{totalslaps} slaps, {len(client.guilds)} slapping servers, and {totalmembers} members slapping'))
 
         elif (args[0] == "bug"):
             if (message.guild.id == 766848554899079218):
@@ -252,9 +257,12 @@ async def on_message(message):
                 server = discord.utils.get(client.guilds, id=int(guild))
                 channel = discord.utils.get(server.channels, id=announcements[guild])
 
+                argsraw = message.clean_content.replace(prefix, "")
+                args = argsraw.split(" ")
+
                 announce = " ".join(args[1:])
 
-                await channel.send(announce)
+                await channel.send(announce, files=await attachments_to_files(message.attachments,True))
 
     elif (client.user in message.mentions):
         await message.channel.send(f"server prefix is `{prefix}`", embed=helpmessage)
