@@ -17,9 +17,7 @@ async def attachments_to_files(attached,spoiler=False):
 
 client = discord.Client(intents=discord.Intents().all())
 
-done = False
-
-async def saveslapstats(message, saved, slappednum, slapnum):
+async def saveslapstats(message, saved, slappednum, slapnum, milestone):
     
     statslappedfile = open("statslapped.json", "rt")
     statslapped = json.loads(statslappedfile.read())
@@ -29,6 +27,10 @@ async def saveslapstats(message, saved, slappednum, slapnum):
     statslap = json.loads(statslapfile.read())
     statslapfile.close()
     
+    precountslaps = 0
+    for id in statslap:
+        precountslaps += statslap[id]
+
     id = str(saved.id)
 
 
@@ -43,14 +45,6 @@ async def saveslapstats(message, saved, slappednum, slapnum):
         statslapped[id] += slappednum
         statslap[id] += slapnum
 
-    totalslaps = 0
-
-    for id in statslap:
-        totalslaps += statslap[id]
-
-    if totalslaps >= 750:
-        print(f"{message.author} dealt the 750th slap on {message.mentions[0]}")
-
     statslapfile = open("statslap.json", "wt")
     statslapfile.write(json.dumps(statslap))
     statslapfile.close()
@@ -58,6 +52,18 @@ async def saveslapstats(message, saved, slappednum, slapnum):
     statslappedfile = open("statslapped.json", "wt")
     statslappedfile.write(json.dumps(statslapped))
     statslappedfile.close()
+    
+    totalslaps = 0
+    for id in statslap:
+        totalslaps += statslap[id]
+
+    if totalslaps >= milestone and precountslaps < milestone:
+        try:
+            print(f"{message.author} dealt the {milestone}th slap on {message.mentions[0]}!")
+            await message.channel.send(f"you got the {milestone}th slap! join the support server and the dev will give you a special role!")
+        except IndexError:
+            print(f"{message.author} dealt the {milestone}th slap on everyone in their server!")
+            await message.channel.send(f"you got the {milestone}th slap! join the support server and the dev will give you a special role!")
     
 @client.event
 async def on_ready():
@@ -74,10 +80,11 @@ async def on_ready():
     for server in client.guilds:
         totalmembers += len(server.members)
     print(f"we have {totalslaps} total slaps\nwe are in {len(client.guilds)} servers\nthere are {totalmembers} people slapping")
-    
+
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps, {len(client.guilds)} slapping servers, and {totalmembers} members slapping"))
 
-shadowban = [431978032094380043]
+milestone = 1100
+shadowban = []
 
 @client.event
 async def on_message(message):
@@ -129,8 +136,6 @@ async def on_message(message):
         await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f'{totalslaps} slaps, {len(client.guilds)} slapping servers, and {totalmembers} members slapping'))
 
         # Commands
-
-
         if (args[0] == "stats"):
             if message.mentions != []:
                 StatsOn = message.mentions[0]
@@ -153,7 +158,7 @@ async def on_message(message):
         
             if message.mention_everyone:
                 await message.channel.send(f"{slapper.name} slapped everyone! what a powermove!")
-                await saveslapstats(saved=slapper, slappednum=0, slapnum=len(message.guild.members), message=message)
+                await saveslapstats(saved=slapper, slappednum=0, slapnum=len(message.guild.members), message=message, milestone=milestone)
 
             elif message.mentions == []:
                 try:
@@ -164,15 +169,15 @@ async def on_message(message):
 
             elif slapped[0] == slapper:
                 await message.channel.send(f"{slapper.name} slapped themself")
-                await saveslapstats(saved=slapper, slappednum=1, slapnum=1, message=message)
+                await saveslapstats(saved=slapper, slappednum=1, slapnum=1, message=message, milestone=milestone)
 
             elif slapped[0] == client.user:
                 await message.channel.send("You cant slap me, I'm unslapable!")
 
             else:
                 await message.channel.send(f"{slapper.name} slapped {slapped[0].name}")
-                await saveslapstats(saved=slapper, slappednum=0, slapnum=1, message=message)
-                await saveslapstats(saved=slapped[0], slappednum=1, slapnum=0, message=message)
+                await saveslapstats(saved=slapper, slappednum=0, slapnum=1, message=message, milestone=milestone)
+                await saveslapstats(saved=slapped[0], slappednum=1, slapnum=0, message=message, milestone=milestone)
             
 
             await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f'{totalslaps} slaps, {len(client.guilds)} slapping servers, and {totalmembers} members slapping'))
