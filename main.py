@@ -83,7 +83,7 @@ async def on_ready():
 
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps, {len(client.guilds)} slapping servers, and {totalmembers} members slapping"))
 
-milestone = 1100
+milestone = 1500
 shadowban = []
 
 @client.event
@@ -101,6 +101,19 @@ async def on_message(message):
     helpmessage = discord.Embed(title="Commands", colour=discord.Colour(0xd084), description=f"**slap** - Slap Someone. use:```{prefix}slap <mention (optional)>```\n**stats** - Get Stats. use:```{prefix}stats <mention (optional)>```\n**bug** - Report a bug, __not for suggestions__. use:```{prefix}bug <report (required)>```\n**suggest** - Make a Suggestion:tm:, __not for bug reports__. use:```{prefix}suggest <suggestion (required)>```\n**invite** - Get an invite to The Server: use:```{prefix}invite```\n**repo** - get a link to the github repo. use:```{prefix}repo```\n**ping** - Get the latency. use:```{prefix}ping```\n**settings** - Change the bot settings. use:```{prefix}settings <prefix/announcement>```")
     helpmessage.set_author(name="Help")
     helpmessage.set_footer(text=f"{message.author.name}", icon_url=f"https://cdn.discordapp.com/avatars/{message.author.id}/{message.author.avatar}.png")
+
+    with open("statslapped.json", "rt") as statslappedfile:
+        statslapped = json.loads(statslappedfile.read())
+    with open("statslap.json", "rt") as statslapfile:
+        statslap = json.loads(statslapfile.read())
+
+    totalslaps = 0
+    totalmembers = 0
+    
+    for id in statslap:
+        totalslaps += statslap[id]
+    for server in client.guilds:
+        totalmembers += len(server.members)
 
     if message.content.startswith(prefix):
 
@@ -120,21 +133,6 @@ async def on_message(message):
         argsraw = message.clean_content.lower().replace(prefix, "")
         args = argsraw.split(" ")
 
-        with open("statslapped.json", "rt") as statslappedfile:
-            statslapped = json.loads(statslappedfile.read())
-        with open("statslap.json", "rt") as statslapfile:
-            statslap = json.loads(statslapfile.read())
-
-        totalslaps = 0
-        totalmembers = 0
-    
-        for id in statslap:
-            totalslaps += statslap[id]
-        for server in client.guilds:
-            totalmembers += len(server.members)
-    
-        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f'{totalslaps} slaps, {len(client.guilds)} slapping servers, and {totalmembers} members slapping'))
-
         # Commands
         if (args[0] == "stats"):
             if message.mentions != []:
@@ -143,7 +141,7 @@ async def on_message(message):
                 StatsOn = message.author
             
             if StatsOn == client.user:
-                await message.channel.send(f"we have {totalslaps} total slaps\nwe are in {len(client.guilds)} servers\nthere are {totalmembers} people slapping")
+                await message.channel.send(f"we have {totalslaps} total slaps\nwe are in {len(client.guilds)} servers\nthere are {totalmembers} people slapping\n{len(announcements)} servers with announcements enabled")
                 return
             
             try:
@@ -280,6 +278,8 @@ async def on_message(message):
 
     elif (client.user in message.mentions):
         await message.channel.send(f"server prefix is `{prefix}`", embed=helpmessage)
+
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f'{totalslaps} slaps, {len(client.guilds)} slapping servers, and {totalmembers} members slapping'))
 
 @client.event
 async def on_guild_join(guild):
