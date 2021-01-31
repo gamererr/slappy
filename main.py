@@ -83,7 +83,7 @@ async def on_ready():
 
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps, {len(client.guilds)} slapping servers, and {totalmembers} members slapping"))
 
-milestone = 1500
+milestone = 2500
 shadowban = []
 
 @client.event
