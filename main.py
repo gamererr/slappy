@@ -218,9 +218,8 @@ async def on_message(message):
             await message.channel.send("Heres the list of commands", embed=helpmessage)
 
         elif (args[0] == "ping"):
-            before = time.monotonic()
             pingmessage = await message.channel.send("Pong!")
-            ping = (time.monotonic() - before) * 1000
+            ping = client.latency * 1000
             ping = str(ping).split(".")
 
             await pingmessage.edit(content=f"Pong! `{ping[0]} ms`")
