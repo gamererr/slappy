@@ -83,7 +83,7 @@ async def on_ready():
 
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f"{totalslaps} slaps, {len(client.guilds)} slapping servers, and {totalmembers} members slapping"))
 
-milestone = 2500
+milestone = 3000
 shadowban = []
 
 @client.event
@@ -303,24 +303,27 @@ async def on_guild_remove(guild):
 
     await bots.send(f"i just left a guild called **{guild.name}** and it had *{len(guild.members)}* members")
 
-    announcementsraw = open("announcements.json", "rt")
-    announcements = json.loads(announcementsraw.read())
-    announcementsraw.close()
+    try:
+        announcementsraw = open("announcements.json", "rt")
+        announcements = json.loads(announcementsraw.read())
+        announcementsraw.close()
 
-    prefixesraw = open("prefixes.json", "rt")
-    prefixes = json.loads(prefixesraw.read())
-    prefixesraw.close()
+        prefixesraw = open("prefixes.json", "rt")
+        prefixes = json.loads(prefixesraw.read())
+        prefixesraw.close()
 
-    announcements.pop(str(guild.id))  
-    prefixes.pop(str(guild.id))    
+        announcements.pop(str(guild.id))  
+        prefixes.pop(str(guild.id))    
 
-    announcementsraw = open("announcements.json", "rt")
-    announcementsraw.write(json.dumps(announcements))
-    announcementsraw.close()
+        announcementsraw = open("announcements.json", "rt")
+        announcementsraw.write(json.dumps(announcements))
+        announcementsraw.close()
 
-    prefixesraw = open("prefixes.json", "rt")
-    prefixesraw.write(json.dumps(prefixes))
-    prefixesraw.close()
+        prefixesraw = open("prefixes.json", "rt")
+        prefixesraw.write(json.dumps(prefixes))
+        prefixesraw.close()
+    except KeyError:
+        return
 
 
 client.run(token)
