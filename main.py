@@ -162,6 +162,7 @@ async def on_message(message):
                 try:
                     if (args[1] != ""):
                         await message.channel.send(f"{slapper.name} slapped {' '.join(args[1:])}")
+                        await message.delete()
                 except IndexError:
                     await message.channel.send(f"{slapper.name} slapped the air")
 
