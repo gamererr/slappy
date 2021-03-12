@@ -128,7 +128,7 @@ async def on_message(message):
         helpmessage.set_footer(text=f"{message.author.name}", icon_url=f"https://cdn.discordapp.com/avatars/{message.author.id}/{message.author.avatar}.png")
     
         internetfunny = discord.utils.get(client.guilds, id=766848554899079218)
-        bug = discord.utils.get(internetfunny.channels, id=782228427880267776)
+        bug = discord.utils.get(internetfunny.channels, id=820023969834729572)
 
         argsraw = message.clean_content.lower().replace(prefix, "")
         args = argsraw.split(" ")
@@ -193,7 +193,7 @@ async def on_message(message):
                 return
             await bug.send(f'report from **{message.author.name}** in server **{message.guild.name}**:\n{" ".join(args[1:])}')
             await message.channel.send("just a friendly reminder not to shitpost into the suggestion and bug report commands as it is very annoying")
-                           
+
         elif (args[0] == "suggest"):
             if (message.guild.id == 766848554899079218):
                 return
@@ -293,7 +293,7 @@ async def on_guild_join(guild):
             await channel.send("thanks for adding me to your server! you can use `s!settings announcements <channel mention>` to follow the announcements")
             break
         except:
-            print("")
+            return
 
 @client.event
 async def on_guild_remove(guild):
