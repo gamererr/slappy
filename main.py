@@ -38,7 +38,7 @@ async def saveslapstats(message, saved, slappednum, slapnum, milestone):
         statslapped[id] += slappednum
         statslap[id] += slapnum
     except KeyError:
-        
+
         statslapped[id] = 0
         statslap[id] = 0
 
@@ -52,7 +52,7 @@ async def saveslapstats(message, saved, slappednum, slapnum, milestone):
     statslappedfile = open("statslapped.json", "wt")
     statslappedfile.write(json.dumps(statslapped))
     statslappedfile.close()
-    
+
     totalslaps = 0
     for id in statslap:
         totalslaps += statslap[id]
@@ -151,11 +151,11 @@ async def on_message(message):
 
         elif (args[0] == "slap"):
             try:
-                slapper = message.mentions[0]
+                slapped = message.mentions[0]
             except IndexError:
                 slapper = message.author
 
-            slapped = message.author
+            slapper = message.author
         
             if message.mention_everyone:
                 await message.channel.send(f"{slapper.name} slapped everyone! what a powermove!")
