@@ -90,7 +90,7 @@ async def getstats(user):
 
         return stats
 
-@slash.slash()
+@slash.slash(description="slap someone")
 async def slap(ctx, user:discord.Member):
     slapper = ctx.author
 
@@ -99,7 +99,7 @@ async def slap(ctx, user:discord.Member):
     await saveslapstats(saved=user, slappednum=1, slapnum=0)
     await saveslapstats(saved=slapper, slappednum=0, slapnum=1)
 
-@slash.slash()
+@slash.slash(description="get a user's stats")
 async def stats(ctx, user:discord.Member = None, hidden:bool=False):
     if user is None:
         user = ctx.author
@@ -114,29 +114,29 @@ async def stats(ctx, user:discord.Member = None, hidden:bool=False):
         except KeyError:
             await ctx.send(f"{user.display_name} has no stats. What a Nerd:tm:!", hidden=hidden)
 
-@slash.slash()
+@slash.slash(description="report a bug")
 async def bug(ctx, bug, hidden:bool=True):
     server = client.get_guild(766848554899079218)
     channel = server.get_channel(820023969834729572)
     await ctx.send("reported!", hidden=hidden)
     await channel.send(f"bug from {ctx.author} in {ctx.guild}:\n`{bug}`")
 
-@slash.slash()
+@slash.slash(description="suggest a feature")
 async def suggestion(ctx, suggestion, hidden:bool=False):
     server = client.get_guild(766848554899079218)
     channel = server.get_channel(820023969834729572)
     await ctx.send("suggested!", hidden=True)
     await channel.send(f"suggestion from {ctx.author} in {ctx.guild}:\n`{suggestion}`", hidden=hidden)
 
-@slash.slash()
+@slash.slash(description="get the bot invite and support server invite")
 async def invite(ctx, hidden:bool=False):
-    await ctx.send("support server: https://discord.gg/HpsDgr9\nbot invite: https://discord.com/api/oauth2/authorize?client_id=798177958686097469&permissions=2048&scope=bot", hidden=hidden)
+    await ctx.send("support server: https://discord.gg/HpsDgr9\nbot invite: https://discord.com/api/oauth2/authorize?client_id=798177958686097469&permissions=2048&scope=bot%20applications.commands", hidden=hidden)
 
-@slash.slash()
+@slash.slash(description="see the github repo")
 async def repo(ctx, hidden:bool=False):
     await ctx.send("here is the github repo: https://github.com/gamererr/slappy", hidden=hidden)
 
-@slash.slash()
+@slash.slash(description="get the bot's ping")
 async def ping(ctx, hidden:bool=False):
     await ctx.send(f'Pong! {round(client.latency*1000)} ms', hidden=hidden)
 
