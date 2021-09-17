@@ -115,11 +115,11 @@ async def stats(ctx, user:discord.Member = None, hidden:bool=False):
             await ctx.send(f"{user.display_name} has no stats. What a Nerd:tm:!", hidden=hidden)
 
 @slash.slash()
-async def bug(ctx, bug, hidden:bool=False):
+async def bug(ctx, bug, hidden:bool=True):
     server = client.get_guild(766848554899079218)
     channel = server.get_channel(820023969834729572)
-    await ctx.send("reported!", hidden=True)
-    await channel.send(f"bug from {ctx.author} in {ctx.guild}:\n`{bug}`", hidden=hidden)
+    await ctx.send("reported!", hidden=hidden)
+    await channel.send(f"bug from {ctx.author} in {ctx.guild}:\n`{bug}`")
 
 @slash.slash()
 async def suggestion(ctx, suggestion, hidden:bool=False):
@@ -166,6 +166,25 @@ async def on_guild_remove(guild):
 @client.event
 async def on_ready():
     print("hello world")
+
+@client.event
+async def on_slash_command(ctx):
+    print(ctx.author, "in", ctx.guild, "used", ctx.data['name'])
+
+    with open("statslapped.json", "rt") as statslappedfile:
+        statslapped = json.loads(statslappedfile.read())
+    with open("statslap.json", "rt") as statslapfile:
+        statslap = json.loads(statslapfile.read())
+
+    totalslaps = 0
+    totalmembers = 0
+    
+    for id in statslap:
+        totalslaps += statslap[id]
+    for server in client.guilds:
+        totalmembers += len(server.members)
+
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f'{totalslaps} slaps, {len(client.guilds)} slapping servers, and {totalmembers} members slapping'))
 
 with open("tokenfile", "r") as tokenfile:
 	token=tokenfile.read()
