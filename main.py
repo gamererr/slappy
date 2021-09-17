@@ -114,6 +114,20 @@ async def stats(ctx, user:discord.Member = None):
         except KeyError:
             await ctx.send(f"{user.display_name} has no stats. What a Nerd:tm:!")
 
+@slash.slash()
+async def bug(ctx, bug):
+    server = client.get_guild(766848554899079218)
+    channel = server.get_channel(820023969834729572)
+    await ctx.send("reported!", hidden=True)
+    await channel.send(f"bug from {ctx.author} in {ctx.guild}:\n`{bug}`")
+
+@slash.slash()
+async def suggestion(ctx, suggestion):
+    server = client.get_guild(766848554899079218)
+    channel = server.get_channel(820023969834729572)
+    await ctx.send("suggested!", hidden=True)
+    await channel.send(f"suggestion from {ctx.author} in {ctx.guild}:\n`{suggestion}`")
+
 with open("tokenfile", "r") as tokenfile:
 	token=tokenfile.read()
 
