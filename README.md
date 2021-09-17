@@ -27,6 +27,6 @@ i was told to make this by some guy in a twitch chat (i wasnt the person streami
 
 # links: 
 
-https://discord.com/api/oauth2/authorize?client_id=798177958686097469&permissions=2048&scope=bot
+https://discord.com/api/oauth2/authorize?client_id=798177958686097469&permissions=2048&scope=bot%20applications.commands
 
 https://discord.gg/ygPF4XH
