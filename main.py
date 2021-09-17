@@ -100,33 +100,72 @@ async def slap(ctx, user:discord.Member):
     await saveslapstats(saved=slapper, slappednum=0, slapnum=1)
 
 @slash.slash()
-async def stats(ctx, user:discord.Member = None):
+async def stats(ctx, user:discord.Member = None, hidden:bool=False):
     if user is None:
         user = ctx.author
     
     stats = await getstats(user)
 
     if user == client.user:
-        await ctx.send(f"we have {stats['slaps']} total slaps\nwe are in {len(client.guilds)} servers\nthere are {stats['members']} people slapping")
+        await ctx.send(f"we have {stats['slaps']} total slaps\nwe are in {len(client.guilds)} servers\nthere are {stats['members']} people slapping", hidden=hidden)
     else:
         try:
-            await ctx.send(f"{user.display_name}'s stats are\nSlaps Dealt: `{stats['slaps']}`\nSlaps Recieved: `{stats['slapped']}`")
+            await ctx.send(f"{user.display_name}'s stats are\nSlaps Dealt: `{stats['slaps']}`\nSlaps Recieved: `{stats['slapped']}`", hidden=hidden)
         except KeyError:
-            await ctx.send(f"{user.display_name} has no stats. What a Nerd:tm:!")
+            await ctx.send(f"{user.display_name} has no stats. What a Nerd:tm:!", hidden=hidden)
 
 @slash.slash()
-async def bug(ctx, bug):
+async def bug(ctx, bug, hidden:bool=False):
     server = client.get_guild(766848554899079218)
     channel = server.get_channel(820023969834729572)
     await ctx.send("reported!", hidden=True)
-    await channel.send(f"bug from {ctx.author} in {ctx.guild}:\n`{bug}`")
+    await channel.send(f"bug from {ctx.author} in {ctx.guild}:\n`{bug}`", hidden=hidden)
 
 @slash.slash()
-async def suggestion(ctx, suggestion):
+async def suggestion(ctx, suggestion, hidden:bool=False):
     server = client.get_guild(766848554899079218)
     channel = server.get_channel(820023969834729572)
     await ctx.send("suggested!", hidden=True)
-    await channel.send(f"suggestion from {ctx.author} in {ctx.guild}:\n`{suggestion}`")
+    await channel.send(f"suggestion from {ctx.author} in {ctx.guild}:\n`{suggestion}`", hidden=hidden)
+
+@slash.slash()
+async def invite(ctx, hidden:bool=False):
+    await ctx.send("support server: https://discord.gg/HpsDgr9\nbot invite: https://discord.com/api/oauth2/authorize?client_id=798177958686097469&permissions=2048&scope=bot", hidden=hidden)
+
+@slash.slash()
+async def repo(ctx, hidden:bool=False):
+    await ctx.send("here is the github repo: https://github.com/gamererr/slappy", hidden=hidden)
+
+@slash.slash()
+async def ping(ctx, hidden:bool=False):
+    await ctx.send(f'Pong! {round(client.latency*1000)} ms', hidden=hidden)
+
+@client.event
+async def on_guild_join(guild):
+
+    internetfunny = discord.utils.get(client.guilds, id=766848554899079218)
+    bots = discord.utils.get(internetfunny.channels, id=782228427880267776)
+
+    await bots.send(f"i just joined a guild called **{guild.name}** and it has *{len(guild.members)}* members")
+    
+    for channel in guild.channels:
+        try:
+            await channel.send("thanks for adding me to your server!")
+            break
+        except:
+            return
+
+@client.event
+async def on_guild_remove(guild):
+
+    internetfunny = discord.utils.get(client.guilds, id=766848554899079218)
+    bots = discord.utils.get(internetfunny.channels, id=782228427880267776)
+
+    await bots.send(f"i just left a guild called **{guild.name}** and it had *{len(guild.members)}* members")
+
+@client.event
+async def on_ready():
+    print("hello world")
 
 with open("tokenfile", "r") as tokenfile:
 	token=tokenfile.read()
