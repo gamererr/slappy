@@ -13,7 +13,7 @@ import json
 
 intents = discord.Intents.all()
 client = commands.Bot(intents=intents, command_prefix="eat my nuts")
-slash = SlashCommand(client, sync_commands=True,debug_guild=766848554899079218)
+slash = SlashCommand(client, sync_commands=True)
 
 async def saveslapstats(saved, slappednum, slapnum):
 
