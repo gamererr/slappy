@@ -12,8 +12,8 @@ import random
 import json
 
 intents = discord.Intents.all()
-client = commands.Bot(intents=intents, command_prefix="eat my nuts")
-slash = SlashCommand(client, sync_commands=True)
+client = commands.Bot(intents=intents, command_prefix="s!")
+slash = SlashCommand(client, sync_commands=True,debug_guild=766848554899079218)
 
 async def saveslapstats(saved, slappednum, slapnum):
 
@@ -90,8 +90,8 @@ async def getstats(user):
 
         return stats
 
-@slash.slash(description="slap someone")
-async def slap(ctx, user:discord.Member):
+@slash.slash(description="slap someone",name="slap")
+async def slapslash(ctx, user:discord.Member):
     slapper = ctx.author
 
     await ctx.send(f"{slapper.display_name} slapped {user.mention}")
@@ -99,8 +99,8 @@ async def slap(ctx, user:discord.Member):
     await saveslapstats(saved=user, slappednum=1, slapnum=0)
     await saveslapstats(saved=slapper, slappednum=0, slapnum=1)
 
-@slash.slash(description="get a user's stats")
-async def stats(ctx, user:discord.Member = None, hidden:bool=False):
+@slash.slash(description="get a user's stats",name="stats")
+async def statsslash(ctx, user:discord.Member = None, hidden:bool=False):
     if user is None:
         user = ctx.author
     
@@ -114,30 +114,30 @@ async def stats(ctx, user:discord.Member = None, hidden:bool=False):
         except KeyError:
             await ctx.send(f"{user.display_name} has no stats. What a Nerd:tm:!", hidden=hidden)
 
-@slash.slash(description="report a bug")
-async def bug(ctx, bug, hidden:bool=True):
+@slash.slash(description="report a bug",name="bug")
+async def bugslash(ctx, bug, hidden:bool=True):
     server = client.get_guild(766848554899079218)
     channel = server.get_channel(820023969834729572)
     await ctx.send("reported!", hidden=hidden)
     await channel.send(f"bug from {ctx.author} in {ctx.guild}:\n`{bug}`")
 
-@slash.slash(description="suggest a feature")
-async def suggestion(ctx, suggestion, hidden:bool=False):
+@slash.slash(description="suggest a feature",name="suggestion")
+async def suggestionslash(ctx, suggestion, hidden:bool=False):
     server = client.get_guild(766848554899079218)
     channel = server.get_channel(820023969834729572)
     await ctx.send("suggested!", hidden=True)
     await channel.send(f"suggestion from {ctx.author} in {ctx.guild}:\n`{suggestion}`", hidden=hidden)
 
-@slash.slash(description="get the bot invite and support server invite")
-async def invite(ctx, hidden:bool=False):
+@slash.slash(description="get the bot invite and support server invite",name="invite")
+async def inviteslash(ctx, hidden:bool=False):
     await ctx.send("support server: https://discord.gg/HpsDgr9\nbot invite: https://discord.com/api/oauth2/authorize?client_id=798177958686097469&permissions=2048&scope=bot%20applications.commands", hidden=hidden)
 
-@slash.slash(description="see the github repo")
-async def repo(ctx, hidden:bool=False):
+@slash.slash(description="see the github repo",name="repo")
+async def reposlash(ctx, hidden:bool=False):
     await ctx.send("here is the github repo: https://github.com/gamererr/slappy", hidden=hidden)
 
-@slash.slash(description="get the bot's ping")
-async def ping(ctx, hidden:bool=False):
+@slash.slash(description="get the bot's ping",name="ping")
+async def pingslash(ctx, hidden:bool=False):
     await ctx.send(f'Pong! {round(client.latency*1000)} ms', hidden=hidden)
 
 @client.event
@@ -185,6 +185,69 @@ async def on_slash_command(ctx):
         totalmembers += len(server.members)
 
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f'{totalslaps} slaps, {len(client.guilds)} slapping servers, and {totalmembers} members slapping'))
+
+@client.command(description="slap someone")
+async def slap(ctx, *slapped):
+    if slapped == ():
+        await ctx.send("you need to name something to slap")
+        return
+    elif ctx.message.mentions == []:
+        slapped = " ".join(slapped)
+    elif ctx.message.mentions != []:
+        slapped = ctx.message.mentions[0]
+    slapper = ctx.author
+
+    await ctx.send(f"{slapper.display_name} slapped {slapped}")
+
+    if type(slapped) != str:
+        await saveslapstats(saved=slapped, slappednum=1, slapnum=0)
+        await saveslapstats(saved=slapper, slappednum=0, slapnum=1)
+
+@client.command(description="get a user's stats")
+async def stats(ctx, *user):
+    if ctx.message.mentions == []:
+        user = ctx.author
+    else:
+        user = ctx.message.mentions[0]
+    
+    stats = await getstats(user)
+
+    if user == client.user:
+        await ctx.send(f"we have {stats['slaps']} total slaps\nwe are in {len(client.guilds)} servers\nthere are {stats['members']} people slapping")
+    else:
+        try:
+            await ctx.send(f"{user.display_name}'s stats are\nSlaps Dealt: `{stats['slaps']}`\nSlaps Recieved: `{stats['slapped']}`")
+        except KeyError:
+            await ctx.send(f"{user.display_name} has no stats. What a Nerd:tm:!")
+
+@client.command(description="report a bug")
+async def bug(ctx, *bug):
+    bug = " ".join(bug)
+    server = client.get_guild(766848554899079218)
+    channel = server.get_channel(820023969834729572)
+    await ctx.send(f"reported `{bug}`!")
+    await channel.send(f"bug from {ctx.author} in {ctx.guild}:\n`{bug}`")
+
+@client.command(description="make a suggestion")
+async def suggest(ctx, *suggestion):
+    suggestion = " ".join(suggestion)
+    server = client.get_guild(766848554899079218)
+    channel = server.get_channel(820023969834729572)
+    await ctx.send(f"reported `{suggestion}`!")
+    await channel.send(f"suggestion from {ctx.author} in {ctx.guild}:\n`{suggestion}`")
+
+@client.command(description="get the bot invite and support server invite")
+async def invite(ctx):
+    await ctx.send("support server: https://discord.gg/HpsDgr9\nbot invite: https://discord.com/api/oauth2/authorize?client_id=798177958686097469&permissions=2048&scope=bot%20applications.commands")
+
+@client.command(description="see the github repo")
+async def repo(ctx):
+    await ctx.send("here is the github repo: https://github.com/gamererr/slappy")
+
+@client.command(description="get the bot's ping")
+async def ping(ctx):
+    await ctx.send(f'Pong! {round(client.latency*1000)} ms')
+
 
 with open("tokenfile", "r") as tokenfile:
 	token=tokenfile.read()
