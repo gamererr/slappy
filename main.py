@@ -175,6 +175,8 @@ async def on_guild_join(guild):
 
 @client.event
 async def on_guild_remove(guild):
+    if guild.name is None:
+        return
 
     internetfunny = discord.utils.get(client.guilds, id=766848554899079218)
     bots = discord.utils.get(internetfunny.channels, id=782228427880267776)
