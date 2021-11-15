@@ -13,7 +13,9 @@ import json
 
 intents = discord.Intents.all()
 client = commands.Bot(intents=intents, command_prefix="s!")
-slash = SlashCommand(client, sync_commands=True)
+slash = SlashCommand(client, sync_commands=True,debug_guild=766848554899079218)
+
+me =["me","slappy","slapy","slap bot","slapbot"]
 
 async def saveslapstats(saved, slappednum, slapnum):
 
@@ -91,13 +93,29 @@ async def getstats(user):
         return stats
 
 @slash.slash(description="slap someone",name="slap")
-async def slapslash(ctx, user:discord.Member):
-    slapper = ctx.author
+async def slapslash(ctx, user:discord.Member=None, slapped:str=None):
+    if slapped != None and user != None:
+        await ctx.send("please only name one thing to slap",hidden=True)
+    elif slapped == None and user != None:
+        if user == client.user:
+            await ctx.send("you cant slap me, im unslappable!",hidden=True)
+            return
+        slapper = ctx.author
 
-    await ctx.send(f"{slapper.display_name} slapped {user.mention}")
+        await ctx.send(f"{slapper.display_name} slapped {user.mention}")
 
-    await saveslapstats(saved=user, slappednum=1, slapnum=0)
-    await saveslapstats(saved=slapper, slappednum=0, slapnum=1)
+        await saveslapstats(saved=user, slappednum=1, slapnum=0)
+        await saveslapstats(saved=slapper, slappednum=0, slapnum=1)
+    elif user == None and slapped != None:
+        if slapped in me:
+            await ctx.send("you cant slap me, im unslappable!",hidden=True)
+            return
+
+        slapper = ctx.author
+
+        await ctx.send(f"{slapper.display_name} slapped {slapped}")
+    else:
+        await ctx.send("you need to give me something for you to slap", hidden=True)
 
 @slash.slash(description="get a user's stats",name="stats")
 async def statsslash(ctx, user:discord.Member = None, hidden:bool=False):
@@ -196,6 +214,10 @@ async def slap(ctx, *slapped):
     elif ctx.message.mentions != []:
         slapped = ctx.message.mentions[0]
     slapper = ctx.author
+
+    if slapped == client.user or slapped in me:
+        await ctx.send("you cant slap me, im unslappable!")
+        return
 
     await ctx.send(f"{slapper.display_name} slapped {slapped}")
 
