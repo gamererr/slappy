@@ -87,10 +87,13 @@ id = base64.b64decode(tokensplit[0])
 if int(id) == 635956284981772289:
     print("using testing bot")
     guild_ids = [779090503341441054]
+else:
+    print("not using testing bot")
+    guild_ids = None
 
 @bot.event
 async def on_ready():
-    print(f"We have logged in as {bot.user}")
+    print("Hello World!")
 
 @bot.slash_command(description="slap someone", guild_ids=guild_ids)
 async def slap(ctx, user:discord.Member=None, slapped:str=None):
