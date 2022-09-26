@@ -133,17 +133,17 @@ async def stats(ctx, user:discord.Member = None, hidden:bool=False):
         except KeyError:
             await ctx.respond(f"{user.display_name} has no stats. What a Nerd:tm:!", ephemeral=hidden)
 
-@bot.slash_command(description="report a bug", guild_ids=guild_ids)
+@bot.slash_command(description="report a bug in the bot. NOT CONNECTED TO THE SERVER", guild_ids=guild_ids)
 async def bug(ctx, bug:str, hidden:bool=True):
-    server = bot.get_guild(766848554899079218)
-    channel = server.get_channel(820023969834729572)
+    server = bot.get_guild(987579392479858780)
+    channel = server.get_channel(1023740794064097410)
     await ctx.respond("reported!", ephemeral=hidden)
     await channel.send(f"bug from {ctx.author} in {ctx.guild}:\n`{bug}`")
 
-@bot.slash_command(description="suggest a feature", guild_ids=guild_ids)
-async def suggestion(ctx, bug:str, hidden:bool=True):
-    server = bot.get_guild(766848554899079218)
-    channel = server.get_channel(820023969834729572)
+@bot.slash_command(description="suggest a feature for the bot. NOT CONNECTED TO THE SERVER", guild_ids=guild_ids)
+async def suggestion(ctx, item:str, hidden:bool=True):
+    server = bot.get_guild(987579392479858780)
+    channel = server.get_channel(1023740794064097410)
     await ctx.respond("reported!", ephemeral=hidden)
     await channel.send(f"suggestion from {ctx.author} in {ctx.guild}:\n`{bug}`")
 
